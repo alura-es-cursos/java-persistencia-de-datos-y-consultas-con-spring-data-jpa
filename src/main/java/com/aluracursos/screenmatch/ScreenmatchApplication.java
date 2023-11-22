@@ -1,16 +1,9 @@
 package com.aluracursos.screenmatch;
 
-import com.aluracursos.screenmatch.model.DatosEpisodio;
-import com.aluracursos.screenmatch.model.DatosSerie;
-import com.aluracursos.screenmatch.model.DatosTemporada;
-import com.aluracursos.screenmatch.service.ConsumoAPI;
-import com.aluracursos.screenmatch.service.ConvierteDatos;
+import com.aluracursos.screenmatch.principal.Principal;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootApplication
 public class ScreenmatchApplication  implements CommandLineRunner {
@@ -21,37 +14,10 @@ public class ScreenmatchApplication  implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println("Primer proyecto Spring sin Web"); // eliminado en el video 1.3
-		// FIN DEL VIDEO 1.2
-		//INICIO VIDEO 1.3
-		var consumoApi = new ConsumoAPI();
-		//var json = consumoApi.obtenerDatos("https://www.omdbapi.com/?t=game+of+thrones&Season=1&apikey=4fc7c187");
-		var json = consumoApi.obtenerDatos("https://www.omdbapi.com/?t=game+of+thrones&&apikey=4fc7c187");
+		Principal principal = new Principal();
+		principal.muestraElMenu();
 
 
-		System.out.println(json);
-//		json = consumoApi.obtenerDatos("https://coffee.alexflipnote.dev/random.json");
-//		System.out.println(json);
-		//FIN VIDEO 1.3
-		//VIDEO 1.4 COMENTAR LAS LINEAS DEL CAFÉ Y QUITAR SEASON DE LA URL
-		ConvierteDatos conversor = new ConvierteDatos();
-		DatosSerie datos = conversor.obtenerDatos(json, DatosSerie.class);
-		System.out.println(datos);
-		//VIDEO 2.1
-		json = consumoApi.obtenerDatos("https://www.omdbapi.com/?t=game+of+thrones&Season=1&Episode=1&apikey=4fc7c187");
-		DatosEpisodio datosEpisodio = conversor.obtenerDatos(json, DatosEpisodio.class);
-		System.out.println(datosEpisodio);
-		//FIN DEL VIDEO 2.1
-
-		//VIDEO 2.2
-		List<DatosTemporada> temporadas = new ArrayList<>();
-
-		for (int i = 1; i<=datos.totalTemporadas(); i++) {
-			json = consumoApi.obtenerDatos("https://www.omdbapi.com/?t=game+of+thrones&Season=" + i + "&apikey=4fc7c187");
-			DatosTemporada datosTemporada = conversor.obtenerDatos(json, DatosTemporada.class);
-			temporadas.add(datosTemporada);
-		}
-		temporadas.forEach(System.out::println);
 
 
 	}
