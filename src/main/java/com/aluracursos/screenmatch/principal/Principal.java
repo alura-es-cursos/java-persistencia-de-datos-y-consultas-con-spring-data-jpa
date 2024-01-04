@@ -2,11 +2,14 @@ package com.aluracursos.screenmatch.principal;
 
 import com.aluracursos.screenmatch.model.DatosSerie;
 import com.aluracursos.screenmatch.model.DatosTemporada;
+import com.aluracursos.screenmatch.model.Serie;
 import com.aluracursos.screenmatch.service.ConsumoAPI;
 import com.aluracursos.screenmatch.service.ConvierteDatos;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Principal {
     private Scanner teclado = new Scanner(System.in);
@@ -14,15 +17,20 @@ public class Principal {
     private final String URL_BASE = "https://www.omdbapi.com/?t=";
     private final String API_KEY = "&apikey=4fc7c187";
     private ConvierteDatos conversor = new ConvierteDatos();
+    private List<DatosSerie> datosSeries = new ArrayList<>();
+
     public void muestraElMenu(){
-      var menu = """
+        var opcion = -1;
+        while (opcion != 0){
+            var menu = """
               1 - Buscar series 
               2 - Buscar episodios
-              
+              3 - Listar series buscadas
               0 - Salir
               """;
-        System.out.println(menu);
-        var opcion = teclado.nextInt();
+            System.out.println(menu);
+
+        opcion = teclado.nextInt();
         teclado.nextLine();
 
         switch (opcion) {
@@ -32,16 +40,30 @@ public class Principal {
             case 2:
                 buscarEpisodioPorSerie();
                 break;
+            case 3:
+                listarSeriesBuscadas();
+                break;
             case 0:
                 System.out.println("Cerrando la aplicación...");
                 break;
             default:
                 System.out.println("Opción inválida");
         }
-
+        }
     }
+
+    private void listarSeriesBuscadas() {
+        List<Serie> series = new ArrayList<>();
+        series = datosSeries.stream().map(d -> new Serie(d))
+                .collect(Collectors.toList());
+        series.stream()
+                .sorted(Comparator.comparing(Serie::getGenero))
+                .forEach(System.out::println);
+    }
+
     private void buscarSerieWeb() {
         DatosSerie datos = getDatosSerie();
+        datosSeries.add(datos);
         System.out.println(datos);
     }
 
