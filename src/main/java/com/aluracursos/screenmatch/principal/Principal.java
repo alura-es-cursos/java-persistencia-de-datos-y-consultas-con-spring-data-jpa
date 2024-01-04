@@ -1,6 +1,5 @@
 package com.aluracursos.screenmatch.principal;
 
-import com.aluracursos.screenmatch.model.DatosEpisodio;
 import com.aluracursos.screenmatch.model.DatosSerie;
 import com.aluracursos.screenmatch.model.DatosTemporada;
 import com.aluracursos.screenmatch.service.ConsumoAPI;
@@ -16,32 +15,55 @@ public class Principal {
     private final String API_KEY = "&apikey=4fc7c187";
     private ConvierteDatos conversor = new ConvierteDatos();
     public void muestraElMenu(){
-        System.out.println("Escribe el nombre de la série que deseas buscar");
-        //Busca los datos generales de las series
-        var nombreSerie = teclado.nextLine();
-        var json = consumoApi.obtenerDatos(URL_BASE + nombreSerie.replace(" ", "+") + API_KEY);
-        //https://www.omdbapi.com/?t=game+of+thrones&apikey=4fc7c187
-        DatosSerie datos = conversor.obtenerDatos(json, DatosSerie.class);
-        System.out.println(datos);
+      var menu = """
+              1 - Buscar series 
+              2 - Buscar episodios
+              
+              0 - Salir
+              """;
+        System.out.println(menu);
+        var opcion = teclado.nextInt();
+        teclado.nextLine();
 
-        //Busca los datos de todas las temporadas
+        switch (opcion) {
+            case 1:
+                buscarSerieWeb();
+                break;
+            case 2:
+                buscarEpisodioPorSerie();
+                break;
+            case 0:
+                System.out.println("Cerrando la aplicación...");
+                break;
+            default:
+                System.out.println("Opción inválida");
+        }
+
+    }
+    private void buscarSerieWeb() {
+        DatosSerie datos = getDatosSerie();
+        System.out.println(datos);
+    }
+
+    private DatosSerie getDatosSerie() {
+        System.out.println("Escribe el nombre de la serie que deseas buscar");
+        var nombreSerie = teclado.nextLine();
+        var json = consumoApi.obtenerDatos(URL_BASE + nombreSerie.replace(" ", "+" )+ API_KEY);
+        System.out.println(json);
+        DatosSerie datos = conversor.obtenerDatos(json, DatosSerie.class);
+        return datos;
+    }
+
+    private void buscarEpisodioPorSerie(){
+        DatosSerie datosSerie = getDatosSerie();
         List<DatosTemporada> temporadas = new ArrayList<>();
 
-        for (int i = 1; i <= datos.totalTemporadas(); i++) {
-            json = consumoApi.obtenerDatos(URL_BASE + nombreSerie.replace(" ", "+") + "&Season=" + i + API_KEY);
+        for (int i = 1; i <= datosSerie.totalTemporadas(); i++) {
+            var json = consumoApi.obtenerDatos(URL_BASE + datosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
             DatosTemporada datosTemporada = conversor.obtenerDatos(json, DatosTemporada.class);
             temporadas.add(datosTemporada);
         }
         temporadas.forEach(System.out::println);
-
-        //Mostrar solo el titulo de los episodios para las temporadas
-        for (int i = 0; i < datos.totalTemporadas(); i++) {
-            List<DatosEpisodio> episodiosTemporadas = temporadas.get(i).episodios();
-            for (int j = 0; j < episodiosTemporadas.size(); j++) {
-                System.out.println(episodiosTemporadas.get(j).titulo());
-            }
-        }
-        // Mejoría usando funciones Lambda
-        temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
     }
 }
+
