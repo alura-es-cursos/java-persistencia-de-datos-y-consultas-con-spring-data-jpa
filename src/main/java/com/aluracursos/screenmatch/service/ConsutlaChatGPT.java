@@ -5,11 +5,11 @@ import com.theokanning.openai.service.OpenAiService;
 
 public class ConsutlaChatGPT {
     public static String obtenerTraduccion(String texto) {
-        OpenAiService service = new OpenAiService("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");
+        OpenAiService service = new OpenAiService("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");
 
 
         CompletionRequest requisicion = CompletionRequest.builder()
-                .model("text-davinci-003")
+                .model("gpt-3.5-turbo-instruct")
                 .prompt("traduce a español el siguiente texto: " + texto)
                 .maxTokens(1000)
                 .temperature(0.7)

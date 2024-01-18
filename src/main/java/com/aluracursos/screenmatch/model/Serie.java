@@ -89,6 +89,6 @@ public Serie(DatosSerie datosSerie){
                 ", evaluacion=" + evaluacion +
                 ", poster='" + poster + '\'' +
                 ", actores='" + actores + '\'' +
-                ", sinopsis='" + sinopsis + '\'';
+                ", sinopsis='" + sinopsis;
     }
 }
