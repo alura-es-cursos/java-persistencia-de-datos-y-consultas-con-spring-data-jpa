@@ -3,6 +3,7 @@ package com.aluracursos.screenmatch.principal;
 import com.aluracursos.screenmatch.model.DatosSerie;
 import com.aluracursos.screenmatch.model.DatosTemporada;
 import com.aluracursos.screenmatch.model.Serie;
+import com.aluracursos.screenmatch.repository.SerieRepository;
 import com.aluracursos.screenmatch.service.ConsumoAPI;
 import com.aluracursos.screenmatch.service.ConvierteDatos;
 import java.util.ArrayList;
@@ -18,6 +19,11 @@ public class Principal {
     private final String API_KEY = "&apikey=4fc7c187";
     private ConvierteDatos conversor = new ConvierteDatos();
     private List<DatosSerie> datosSeries = new ArrayList<>();
+
+    private SerieRepository repository;
+    public Principal(SerieRepository repository) {
+        this.repository = repository;
+    }
 
     public void muestraElMenu(){
         var opcion = -1;
@@ -52,27 +58,23 @@ public class Principal {
         }
     }
 
-    private void listarSeriesBuscadas() {
-        List<Serie> series = new ArrayList<>();
-        series = datosSeries.stream().map(d -> new Serie(d))
-                .collect(Collectors.toList());
-        series.stream()
-                .sorted(Comparator.comparing(Serie::getGenero))
-                .forEach(System.out::println);
-    }
+
 
     private void buscarSerieWeb() {
         DatosSerie datos = getDatosSerie();
-        datosSeries.add(datos);
+        Serie serie = new Serie(datos);
+        repository.save(serie);
+        //datosSeries.add(datos);
         System.out.println(datos);
+
     }
 
     private DatosSerie getDatosSerie() {
         System.out.println("Escribe el nombre de la serie que deseas buscar");
         var nombreSerie = teclado.nextLine();
         var json = consumoApi.obtenerDatos(URL_BASE + nombreSerie.replace(" ", "+" )+ API_KEY);
-        System.out.println(json);
         DatosSerie datos = conversor.obtenerDatos(json, DatosSerie.class);
+        System.out.println(datos.sinopsis());
         return datos;
     }
 
@@ -86,6 +88,13 @@ public class Principal {
             temporadas.add(datosTemporada);
         }
         temporadas.forEach(System.out::println);
+    }
+    private void listarSeriesBuscadas() {
+        List<Serie> series = repository.findAll();
+        series.stream()
+                .sorted(Comparator.comparing(Serie::getGenero))
+                .forEach(System.out::println);
+
     }
 }
 
