@@ -6,10 +6,8 @@ import com.aluracursos.screenmatch.model.Serie;
 import com.aluracursos.screenmatch.repository.SerieRepository;
 import com.aluracursos.screenmatch.service.ConsumoAPI;
 import com.aluracursos.screenmatch.service.ConvierteDatos;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Principal {
@@ -32,6 +30,7 @@ public class Principal {
               1 - Buscar series 
               2 - Buscar episodios
               3 - Listar series buscadas
+              4 - Buscar series por título
               0 - Salir
               """;
             System.out.println(menu);
@@ -49,6 +48,9 @@ public class Principal {
             case 3:
                 listarSeriesBuscadas();
                 break;
+            case 4:
+                buscarSeriePorTitulo();
+                break;
             case 0:
                 System.out.println("Cerrando la aplicación...");
                 break;
@@ -58,6 +60,17 @@ public class Principal {
         }
     }
 
+    private void buscarSeriePorTitulo() {
+        System.out.println("Escriba el nombre de la serie que desea buscar");
+        var nombreSerie = teclado.nextLine();
+        Optional<Serie> serieBuscada = repository.findByTituloContainingIgnoreCase(nombreSerie);
+
+        if (serieBuscada.isPresent()){
+            System.out.println("Datos de la serie: " + serieBuscada.get());
+        } else {
+            System.out.println("Datos no encontrados");
+        }
+    }
 
 
     private void buscarSerieWeb() {
