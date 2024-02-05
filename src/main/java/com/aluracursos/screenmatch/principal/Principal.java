@@ -71,7 +71,6 @@ public class Principal {
         var nombreSerie = teclado.nextLine();
         var json = consumoApi.obtenerDatos(URL_BASE + nombreSerie.replace(" ", "+" )+ API_KEY);
         DatosSerie datos = conversor.obtenerDatos(json, DatosSerie.class);
-        System.out.println(datos.sinopsis());
         return datos;
     }
 
