@@ -30,8 +30,6 @@ public class Principal {
               1 - Buscar series 
               2 - Buscar episodios
               3 - Listar series buscadas
-              
-              
               4 - Buscar series por título
               5 - Top 5 series
               6 - Buscar series por categoría
@@ -73,19 +71,6 @@ public class Principal {
         }
         }
     }
-
-    private void buscarSeriePorTitulo() {
-        System.out.println("Escriba el nombre de la serie que desea buscar");
-        var nombreSerie = teclado.nextLine();
-        Optional<Serie> serieBuscada = repository.findByTituloContainingIgnoreCase(nombreSerie);
-
-        if (serieBuscada.isPresent()){
-            System.out.println("Datos de la serie: " + serieBuscada.get());
-        } else {
-            System.out.println("Datos no encontrados");
-        }
-    }
-
 
     private void buscarSerieWeb() {
         DatosSerie datos = getDatosSerie();
@@ -129,6 +114,17 @@ public class Principal {
                 .sorted(Comparator.comparing(Serie::getGenero))
                 .forEach(System.out::println);
 
+    }
+    private void buscarSeriePorTitulo() {
+        System.out.println("Escriba el nombre de la serie que desea buscar");
+        var nombreSerie = teclado.nextLine();
+        Optional<Serie> serieBuscada = repository.findByTituloContainingIgnoreCase(nombreSerie);
+
+        if (serieBuscada.isPresent()){
+            System.out.println("Datos de la serie: " + serieBuscada.get());
+        } else {
+            System.out.println("Datos no encontrados");
+        }
     }
     public void buscarTop5Series(){
         List<Serie> topSeries = repository.findTop5ByOrderByEvaluacionDesc();
