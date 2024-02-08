@@ -96,17 +96,33 @@ public class Principal {
         return datos;
     }
 
-    private void buscarEpisodioPorSerie(){
-        DatosSerie datosSerie = getDatosSerie();
-        List<DatosTemporada> temporadas = new ArrayList<>();
+    private void buscarEpisodioPorSerie() {
+        listarSeriesBuscadas();
+        System.out.println("Escriba el nombre de la serie que desea ver");
+        var nombreSerie = teclado.nextLine();
+        Optional<Serie> serie = series.stream()
+                .filter(s -> s.getTitulo().toLowerCase().contains(nombreSerie.toLowerCase()))
+                .findFirst();
+        if (serie.isPresent()) {
+            var serieEncontrada = serie.get();
+            List<DatosTemporada> temporadas = new ArrayList<>();
+            for (int i = 1; i <= serieEncontrada.getTotalTemporadas(); i++) {
+                var json = consumoApi.obtenerDatos(URL_BASE + serieEncontrada.getTitulo().replace(" ", "+") + "&season=" + i + API_KEY);
+                DatosTemporada datosTemporada = conversor.obtenerDatos(json, DatosTemporada.class);
+                temporadas.add(datosTemporada);
+            }
+            temporadas.forEach(System.out::println);
 
-        for (int i = 1; i <= datosSerie.totalTemporadas(); i++) {
-            var json = consumoApi.obtenerDatos(URL_BASE + datosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
-            DatosTemporada datosTemporada = conversor.obtenerDatos(json, DatosTemporada.class);
-            temporadas.add(datosTemporada);
+            List<Episodio> episodios = temporadas.stream()
+                    .flatMap(d -> d.episodios().stream()
+                            .map(e -> new Episodio(d.numero(), e)))
+                    .collect(Collectors.toList());
+
+            serieEncontrada.setEpisodios(episodios);
+            repository.save(serieEncontrada);
         }
-        temporadas.forEach(System.out::println);
     }
+
     private void listarSeriesBuscadas() {
         series = repository.findAll();
         series.stream()
