@@ -36,7 +36,7 @@ public class Serie {
         this.poster = datosSerie.poster();
         this.genero = Categoria.fromString(datosSerie.genero().split(",")[0].trim());
         this.actores = datosSerie.actores();
-        this.sinopsis = ConsutlaChatGPT.obtenerTraduccion(datosSerie.sinopsis()).trim();
+        this.sinopsis = datosSerie.sinopsis();
     }
 
     public Long getId() {
