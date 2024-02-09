@@ -29,7 +29,7 @@ public class Principal {
               1 - Buscar series 
               2 - Buscar episodios
               3 - Listar series buscadas
-              4 - Buscar series por título
+              4 - Buscar series guardadas por nombre
               5 - Top 5 series
               6 - Buscar series por categoría
               7 - Filtrar series
@@ -152,7 +152,7 @@ public class Principal {
         var nombreGenero = teclado.nextLine();
         Categoria categoria = Categoria.fromEspanol(nombreGenero);
         List<Serie> seriesPorCategoria = repository.findByGenero(categoria);
-        System.out.println("Séries da categoria " + nombreGenero);
+        System.out.println("Series de la categoria " + nombreGenero);
         seriesPorCategoria.forEach(System.out::println);
     }
 
@@ -188,7 +188,6 @@ public class Principal {
                     System.out.printf("Série: %s Temporada %s - Episódio %s - %s - Evaluacion %s\n",
                             e.getSerie().getTitulo(), e.getTemporada(),
                             e.getNumeroEpisodio(), e.getTitulo(), e.getEvaluacion()));
-
         }
 
     }
